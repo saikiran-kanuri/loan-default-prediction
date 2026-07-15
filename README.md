@@ -2,7 +2,7 @@
 
 An end-to-end machine learning system that predicts whether a loan applicant is likely to repay or default, trained on real Lending Club loan data. Built and deployed as a live, working web application — not just a notebook.
 
-**Live demo:** API: https://loan-default-prediction-276p.onrender.com/docs — Streamlit frontend link coming soon
+**Live demo:** App: https://loan-default-prediction-rf2efsgltxzdrmumqcljur.streamlit.app | API docs: https://loan-default-prediction-276p.onrender.com/docs
 
 ## Problem
 
