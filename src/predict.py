@@ -2,31 +2,29 @@
 predict.py
 Loads the trained XGBoost pipeline and exposes a simple predict() function
 for the Lending Club model.
-
 Handles partial input: any column not provided by the caller is filled
 with NaN before reaching the pipeline, so SimpleImputer can handle it —
 the pipeline requires all expected columns to be PRESENT (even if empty),
 not just the ones with known values.
 """
-
+import json
 import numpy as np
 import joblib
 import pandas as pd
-
 from src.config import PROJECT_ROOT, TARGET_COLUMN
 from src.features import engineer_features
 from src.data_loader import load_data, clean_data
 
 MODEL_PATH = PROJECT_ROOT / "models" / "model_v2_xgboost.pkl"
-
 _pipeline = joblib.load(MODEL_PATH)
 
 # The exact set of columns the pipeline was trained on (post-cleaning,
-# pre-feature-engineering) — computed once at import time from the
-# real data, so this can never drift out of sync with training.
-_df_reference = load_data()
-_df_reference = clean_data(_df_reference)
-EXPECTED_COLUMNS = [c for c in _df_reference.columns if c != TARGET_COLUMN]
+# pre-feature-engineering). Loaded from a small committed JSON file
+# instead of the raw CSV, so the API doesn't need the 80MB dataset
+# present at runtime — only the trained model and this column list.
+EXPECTED_COLUMNS_PATH = PROJECT_ROOT / "src" / "expected_columns.json"
+with open(EXPECTED_COLUMNS_PATH) as f:
+    EXPECTED_COLUMNS = json.load(f)
 
 
 def predict(input_dict: dict) -> dict:
